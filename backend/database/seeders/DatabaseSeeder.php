@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Role;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,11 +21,23 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // Create Super Admin user
-        User::factory()->create([
+        // Seed default roles
+        $roles = [
+            ['name' => 'Super Admin', 'description' => 'Full system access'],
+            ['name' => 'Employee', 'description' => 'Company staff'],
+            ['name' => 'Client', 'description' => 'External client'],
+        ];
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role['name']], $role);
+        }
+
+        // Create Super Admin user and assign role
+        $superAdminRole = Role::where('name', 'Super Admin')->first();
+        $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@arkraft.com',
+            'email' => 'superdk@arkraft.co.ke',
             'password' => bcrypt('canivore99'),
+            'role_id' => $superAdminRole->id,
         ]);
     }
 }
